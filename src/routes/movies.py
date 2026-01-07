@@ -11,7 +11,7 @@ from src.schemas.movies import MovieListResponseSchema, MovieDetailResponseSchem
 router = APIRouter()
 
 
-@router.get("/movies/", response_model=MovieListResponseSchema)
+@router.get("/theater/movies/", response_model=MovieListResponseSchema)
 async def get_movies(
         page: int = Query(1, ge=1),
         per_page: int = Query(10, ge=1, le=20),
@@ -33,7 +33,7 @@ async def get_movies(
     result = await db.execute(select(MovieModel).offset(offset).limit(per_page))
     movies = result.scalars().all()
 
-    base_url = "/movies/"
+    base_url = "/theater/movies/"
     prev_page = f"{base_url}?page={page - 1}&per_page={per_page}" if page > 1 else None
     next_page = f"{base_url}?page={page + 1}&per_page={per_page}" if page < total_pages else None
 
@@ -46,7 +46,7 @@ async def get_movies(
     )
 
 
-@router.get("/movies/{movie_id}/", response_model=MovieDetailResponseSchema)
+@router.get("/theater/movies/{movie_id}/", response_model=MovieDetailResponseSchema)
 async def get_movie(movie_id: int, db: AsyncSession = Depends(get_db)):
     result = await db.execute(
         select(MovieModel).where(MovieModel.id == movie_id)
